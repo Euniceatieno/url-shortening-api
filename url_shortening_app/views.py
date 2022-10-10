@@ -1,33 +1,30 @@
 # from django.shortcuts import render
 from datetime import datetime
-import secrets
 import logging
-import string
-from rich import print
 from url_shortening_app.models import OriginalUrl
 from url_shortening_app.serializers import OriginalUrlSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from url_shortening_app.utils import CacheObject
+from url_shortening_app.utils import RedisCache, generate_random_string
 
 
 # create a redis instance
-redis_cache = CacheObject("")
+redis_cache = RedisCache()
 
 
 ###############################################################
 # Converting a provided long url to it's shortened version
 ###############################################################
-def make_clickable(original_url, shortened_url):
-    print(f"[link={original_url}]{shortened_url}[/link]!"),
 
 
 @api_view(["POST", "GET", "DELETE"])
 def encode_url(request):
     print(request.method)
     if request.method == "POST":
+
         payload = request.data
+        payload["original_url_id"] = generate_random_string()
         original_url = payload["original_url"]
         original_url_object = OriginalUrl.objects.filter(
             original_url=original_url
@@ -52,13 +49,11 @@ def encode_url(request):
                 return Response(data, status=status.HTTP_200_OK)
 
             # generate the short url
-            base_url = "https://finnly.com/"
-            str = string.ascii_lowercase
-            random_string = "".join(secrets.choice(str) for i in range(4))
-            shortened_url = base_url + random_string
+            base_url = "https://finn.ly/"
+            shortened_url = base_url + payload["original_url_id"]
             data = {
                 "original_url": original_url,
-                "shortened_url": make_clickable(original_url, shortened_url),
+                "shortened_url": shortened_url,
                 "date_created": datetime.now(),
                 "encoded": True,
             }
@@ -70,6 +65,7 @@ def encode_url(request):
         except Exception as exc:
             logging.info("Error posting request")
             logging.exception(exc)
+            return
 
     return Response(
         {"error_message": "Request method should be 'POST'"},
@@ -84,25 +80,41 @@ def encode_url(request):
 
 @api_view(["POST"])
 def decode_url(request):
-    print(request.data)
     if request.method == "POST":
-        payload = request.data
-        shortened_url = payload["shortened_url"]
+        try:
+            payload = request.data
+            shortened_url = payload["shortened_url"]
+            url_id = shortened_url[-4:]
 
-        # retrieve original_url from cache
-        cache_keys = redis_cache.keys()
-        print(f"-----------------------{cache_keys}")
-        for cache_key in cache_keys:
-            print(redis_cache.get(cache_key) == shortened_url, cache_key)
-            if redis_cache.get(cache_key) == shortened_url:
+            # query  the original_url object where
+            # url_id is the original_url_id
+            original_url_object = OriginalUrl.objects.filter(
+                original_url_id=str(url_id)
+            ).first()
+
+            if original_url_object is not None:
                 data = {
                     "shortened_url": shortened_url,
-                    "original_url": cache_key[13:],
+                    "original_url": original_url_object.original_url,
                     "date_created": datetime.now(),
                     "decoded": True,
                 }
-                print(data)
                 return Response(data, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    {
+                        "error_message": (
+                            f"Short url:{shortened_url} isn't "
+                            f"mapped to any url"
+                        )
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        except Exception as exc:
+            logging.info("Error posting request")
+            logging.exception(exc)
+
     return Response(
         {"error_message": "Request method should be 'POST'"},
         status=status.HTTP_400_BAD_REQUEST,

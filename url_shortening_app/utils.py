@@ -1,7 +1,9 @@
 import redis
+import string
+import secrets
 
 ##############################################################
-# Abasract caching logic
+# Absracting caching logic
 ###############################################################
 
 
@@ -10,7 +12,7 @@ def redis_instance():
     return redis.Redis()
 
 
-class CacheObject(object):
+class RedisCache(object):
     def __init__(self):
         self.redis = redis_instance()
 
@@ -29,3 +31,13 @@ class CacheObject(object):
     def keys(self):
         # retrieve all keys
         self.redis.keys()
+
+
+##############################################################
+# Absracting random string generation logic
+###############################################################
+
+def generate_random_string():
+    str = string.ascii_lowercase
+    random_string = "".join(secrets.choice(str) for i in range(4))
+    return random_string

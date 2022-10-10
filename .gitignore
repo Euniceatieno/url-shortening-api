@@ -8,12 +8,9 @@ env/
 .vscode/
 .idea
 *.iml
-dist/
-*.egg-info/
 build/
 .envrc
 .env
-.DS_Store
 run
 /assets/
 __pycache__
@@ -23,14 +20,7 @@ coverage.xml
 report.html
 .idea
 .pytest_cache/
-htmlcov/
 .coverage
 assets/
-dev-notes.md
 venv/
-node_modules/
-package.json
 *.lock
-start.sh
-twigadms*.json
-templates/*/*.pdf
