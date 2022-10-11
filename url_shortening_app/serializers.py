@@ -6,4 +6,4 @@ from .models import OriginalUrl
 class OriginalUrlSerializer(serializers.ModelSerializer):
     class Meta:
         model = OriginalUrl
-        fields = ("original_url", "date_created")
+        fields = ("original_url_id", "original_url", "date_created")

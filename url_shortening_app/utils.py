@@ -1,6 +1,9 @@
+import logging
 import redis
 import string
 import secrets
+
+import requests
 
 ##############################################################
 # Absracting caching logic
@@ -37,7 +40,22 @@ class RedisCache(object):
 # Absracting random string generation logic
 ###############################################################
 
+
 def generate_random_string():
-    str = string.ascii_lowercase
-    random_string = "".join(secrets.choice(str) for i in range(4))
+    str = string.ascii_lowercase + string.digits
+    random_string = "".join(secrets.choice(str) for i in range(6))
     return random_string
+
+
+##############################################################
+# Absracting url validation logic
+###############################################################
+
+
+def validate_url(passed_url):
+    try:
+        requests.get(passed_url)
+        return True
+    except Exception as exc:
+        logging.exception(exc)
+        return False

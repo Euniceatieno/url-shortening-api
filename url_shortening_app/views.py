@@ -6,7 +6,11 @@ from url_shortening_app.serializers import OriginalUrlSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from url_shortening_app.utils import RedisCache, generate_random_string
+from url_shortening_app.utils import (
+    RedisCache,
+    generate_random_string,
+    validate_url,
+)
 
 
 # create a redis instance
@@ -20,12 +24,21 @@ redis_cache = RedisCache()
 
 @api_view(["POST", "GET", "DELETE"])
 def encode_url(request):
-    print(request.method)
     if request.method == "POST":
 
         payload = request.data
         payload["original_url_id"] = generate_random_string()
         original_url = payload["original_url"]
+        valid_url = validate_url(original_url)
+        if valid_url is not True:
+            return Response(
+                {
+                    "invalid_url_error": f"{original_url} does not "
+                                         f"exist on Internet"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         original_url_object = OriginalUrl.objects.filter(
             original_url=original_url
         ).first()
@@ -49,7 +62,8 @@ def encode_url(request):
                 return Response(data, status=status.HTTP_200_OK)
 
             # generate the short url
-            base_url = "https://finn.ly/"
+
+            base_url = "http://short.est/"
             shortened_url = base_url + payload["original_url_id"]
             data = {
                 "original_url": original_url,
@@ -84,8 +98,7 @@ def decode_url(request):
         try:
             payload = request.data
             shortened_url = payload["shortened_url"]
-            url_id = shortened_url[-4:]
-
+            url_id = shortened_url[-6:]
             # query  the original_url object where
             # url_id is the original_url_id
             original_url_object = OriginalUrl.objects.filter(
