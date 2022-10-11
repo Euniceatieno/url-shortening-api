@@ -1,6 +1,8 @@
 # from django.shortcuts import render
 from datetime import datetime
 import logging
+
+from django.shortcuts import redirect
 from url_shortening_app.models import OriginalUrl
 from url_shortening_app.serializers import OriginalUrlSerializer
 from rest_framework import status
@@ -11,6 +13,7 @@ from url_shortening_app.utils import (
     generate_random_string,
     validate_url,
 )
+from django.views.decorators.csrf import csrf_exempt
 
 
 # create a redis instance
@@ -34,7 +37,7 @@ def encode_url(request):
             return Response(
                 {
                     "invalid_url_error": f"{original_url} does not "
-                                         f"exist on Internet"
+                    f"exist on Internet"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -63,8 +66,10 @@ def encode_url(request):
 
             # generate the short url
 
-            base_url = "http://short.est/"
-            shortened_url = base_url + payload["original_url_id"]
+            base_url = request.build_absolute_uri()[
+                : -len(request.get_full_path())
+            ]
+            shortened_url = base_url + "/" + payload["original_url_id"]
             data = {
                 "original_url": original_url,
                 "shortened_url": shortened_url,
@@ -85,6 +90,19 @@ def encode_url(request):
         {"error_message": "Request method should be 'POST'"},
         status=status.HTTP_400_BAD_REQUEST,
     )
+
+
+###############################################################
+# Redirecting the short_url
+###############################################################
+
+
+@csrf_exempt
+def redirect_short_url(request, url_id):
+    original_url_object = OriginalUrl.objects.filter(
+        original_url_id=str(url_id)
+    ).first()
+    return redirect(original_url_object.original_url)
 
 
 ###############################################################
