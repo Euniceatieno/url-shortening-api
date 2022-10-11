@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # project apps
     "url_shortening_app",
-
+    
 ]
 
 MIDDLEWARE = [

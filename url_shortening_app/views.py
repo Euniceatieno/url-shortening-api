@@ -25,7 +25,7 @@ redis_cache = RedisCache()
 ###############################################################
 
 
-@api_view(["POST", "GET", "DELETE"])
+@api_view(["POST"])
 def encode_url(request):
     if request.method == "POST":
 

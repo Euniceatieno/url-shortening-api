@@ -31,10 +31,6 @@ class RedisCache(object):
         # delete cache
         self.redis.delete(str(key))
 
-    def keys(self):
-        # retrieve all keys
-        self.redis.keys()
-
 
 ##############################################################
 # Absracting random string generation logic
