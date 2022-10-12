@@ -1,52 +1,27 @@
 from rest_framework import status
-import pytest
-from django.http import HttpRequest
-import unittest
-from url_shortening_app.utils import generate_random_string
-from url_shortening_app.views import encode_url
-
-REDIS_DATA = {}
+from rest_framework.test import APITestCase
 
 
-class FakeRedis:
-    """Fake Redis Class for Tests"""
-
-    def __init__(self):
-        global REDIS_DATA
-        self.data = REDIS_DATA
-
-    def get(self, key):
-        return self.data.get(str(key))
-
-    def set_(self, key, value):
-        return self.data.set(str(key), value)
-
-    def delete(self, key):
-        return self.data.delete(str(key))
-
-
-@pytest.fixture
-def mock_redis(monkeypatch):
-    global REDIS_DATA
-    REDIS_DATA = {}
-    return FakeRedis("")
-
-
-class UrlEncodeDecodeTests(unittest.TestCase):
+class UrlEncodeDecodeTests(APITestCase):
     def test_encode_url(self):
-
         original_url = (
             "https://www.google.com/search?q=build_absolute"
             "_uri&oq=build_absolute_uri&aqs=chrome."
             ".69i57j0i512l2j0i5i30l2j0i5i10i30j0i30j69i61."
             "789j0j7&sourceid=chrome&ie=UTF-8"
         )
+        original_url_id = "nt3wa7"
 
-        request = HttpRequest()
+        data = {
+            "original_url": original_url,
+            "original_url_id": original_url_id,
+        }
+        response = self.client.post("/encode_url/", data)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
-        request.method = "POST"
-        request.POST["original_url"] = original_url
-        request.POST["original_url_id"] = generate_random_string()
-        request.META["HTTP_HOST"] = "localhost"
-        response = encode_url(request)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_decode_url(self):
+
+        data = {"shortened_url": "http://127.0.0.1:8000/nt3wa7"}
+        response = self.client.post("/decode_url/", data)
+
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)

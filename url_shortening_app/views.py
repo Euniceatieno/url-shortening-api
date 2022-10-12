@@ -1,7 +1,6 @@
 # from django.shortcuts import render
 from datetime import datetime
 import logging
-
 from django.shortcuts import redirect
 from url_shortening_app.models import OriginalUrl
 from url_shortening_app.serializers import OriginalUrlSerializer
@@ -102,6 +101,11 @@ def redirect_short_url(request, url_id):
     original_url_object = OriginalUrl.objects.filter(
         original_url_id=str(url_id)
     ).first()
+    if original_url_object is None:
+        base_url = request.build_absolute_uri()[
+            : -len(request.get_full_path())
+        ]
+        return redirect(base_url)
     return redirect(original_url_object.original_url)
 
 

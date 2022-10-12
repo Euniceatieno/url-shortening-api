@@ -10,6 +10,11 @@ On clicking the shortened_url ,the user is redirected to the resource behind the
 * The service also allows the user to enter a shortened url via the */decode* endpoint  
 and receive a response with the original url.
 
+## Alternatively watch the video to understand how the service works
+
+<video src="url-shortener-2022-10-13_00.07.29.mp4" controls="controls" style="max-width: 1530px;">
+</video>
+
 
 # Core Technologies and Libraries Used
 
@@ -17,11 +22,11 @@ Technology/Library | Description
 --- | --- |
 *Django REST Framework* | *Api building framework for django*
 *Postman* |*Api testing*
-*Logging* | *Application monitoring* 
-*Pytest* | *For writing tests*
+*Logging* | *Application events recording* 
+*Unittest* | *A python library for writing tests*
 *Postgres* | *A relational database service*
 *Python* | *An object oriented programming language* 
-*Redis* | *A in memery cache service*
+*Redis* | *An in mem0ry cache service*
 *Django* | *A python framework for building serverside applications*
 *Flake8* | *A code formatting library for Python*  
   
