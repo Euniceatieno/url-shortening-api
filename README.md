@@ -1,38 +1,117 @@
-### Objective
+# URL Shortening Service
+This is an application that performs the following:  
+ * Converts a provided long url to it's shortened version.
+ * Converts a shortened url back to it's original long version. 
 
-Your assignment is to implement a URL shortening service using Python and any framework.
+# How it works
+* The service allows the user to enter an original url through the */encode* endpoint  
+and  receive a response with the shortened_url.  
+On clicking the shortened_url ,the user is redirected to the resource behind the original url  
+* The service also allows the user to enter a shortened url via the */decode* endpoint  
+and receive a response with the original url.
 
-### Brief
+## Alternatively watch the video to understand how the service works
 
-ShortLink is a URL shortening service where you enter a URL such as https://codesubmit.io/library/react and it returns a short URL such as http://short.est/GeAi9K.
-
-### Tasks
-
--   Implement assignment using:
-    -   Language: **Python**
-    -   Framework: **any framework**
-    -   Two endpoints are required
-        -   /encode - Encodes a URL to a shortened URL
-        -   /decode - Decodes a shortened URL to its original URL.
-    -   Both endpoints should return JSON
--   There is no restriction on how your encode/decode algorithm should work. You just need to make sure that a URL can be encoded to a short URL and the short URL can be decoded to the original URL. **You do not need to persist short URLs to a database. Keep them in memory.**
--   Provide detailed instructions on how to run your assignment in a separate markdown file
--   Provide API tests for both endpoints
-
-### Evaluation Criteria
-
--   **Python** best practices
--   API implemented featuring a /encode and /decode endpoint
--   Show us your work through your commit history
--   Completeness: did you complete the features? Are all the tests running?
--   Correctness: does the functionality act in sensible, thought-out ways?
--   Maintainability: is it written in a clean, maintainable way?
+<video src="url-shortener-2022-10-13_00.07.29.mp4" controls="controls" style="max-width: 1530px;">
+</video>
 
 
-### CodeSubmit
+# Core Technologies and Libraries Used
 
-Please organize, design, test and document your code as if it were going into production - then push your changes to the master branch. After you have pushed your code, you may submit the assignment on the assignment page.
+Technology/Library | Description 
+--- | --- |
+*Django REST Framework* | *Api building framework for django*
+*Postman* |*Api testing*
+*Logging* | *Application events recording* 
+*Unittest* | *A python library for writing tests*
+*Postgres* | *A relational database service*
+*Python* | *An object oriented programming language* 
+*Redis* | *An in mem0ry cache service*
+*Django* | *A python framework for building serverside applications*
+*Flake8* | *A code formatting library for Python*  
+  
 
-All the best and happy coding,
+# Setting up the codebase locally
 
-The finn GmbH Team
+This is a step by step guide on how to set up the codebase locally
+
+Clone the project
+----------------------
+``` shell
+git clone http://finn-gmbh-wbumum@git.codesubmit.io/finn-gmbh/default-python-kyusoj
+```
+Set up your virtual environment
+----------------------
+``` shell
+gpython3 -m venv env
+```
+Activate your virtual environment
+----------------------
+``` shell
+source env/bin/activate
+```
+Install the required packages
+----------------------
+``` shell
+python3 -m pip install -r requirements.txt --no-cache-dir
+```
+Create a .env file with the following environment variables
+------------------------------------------------------------------
+``` shell
+SECRET_KEY=yoursecretkey
+DATABASE_NAME=yourdb
+DATABASE_USER=yourdbuser
+DATABASE_PASSWORD=yourbdpassword
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+```
+Export your environment variables
+--------------------------------------------
+``` shell
+source .env
+```
+Create a local database with the credentials in your .env file
+---------------------------------------------------------------
+
+Run migrations
+----------------------
+``` shell
+python3 manage.py makemigrations
+```
+Migrate database updates
+----------------------
+``` shell
+python3 manage.py migrate
+```
+Run Unit Tests
+----------------------
+``` shell
+coverage run manage.py test
+
+```
+Start local server
+----------------------
+``` shell
+python3 manage.py runserver
+```
+Encode a url on postman *http://127.0.0.1:8000/encode/*
+--------------------------------------------------------
+``` shell
+Add the json below as the request body:
+ {
+    "original": "https://www.tutorialspoint.com/python_network_programming/python_dns_look_up.htm"
+ }
+
+```
+Decode a url on postman *http://127.0.0.1:8000/decode/*
+-------------------------------------------------------
+``` shell
+Add the json below as the request body:
+ {
+    "shortened_url": "http://127.0.0.1:8000/gta8mw"
+ }
+```
+
+
+# Contacts
+For any queries ,reach out to *eunniceatieno@gmail.com*
