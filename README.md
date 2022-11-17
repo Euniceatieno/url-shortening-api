@@ -10,11 +10,6 @@ On clicking the shortened_url ,the user is redirected to the resource behind the
 * The service also allows the user to enter a shortened url via the */decode* endpoint  
 and receive a response with the original url.
 
-## Alternatively watch the video to understand how the service works
-
-<video src="url-shortener-2022-10-13_00.07.29.mp4" controls="controls" style="max-width: 1530px;">
-</video>
-
 
 # Core Technologies and Libraries Used
 
@@ -38,7 +33,7 @@ This is a step by step guide on how to set up the codebase locally
 Clone the project
 ----------------------
 ``` shell
-git clone http://finn-gmbh-wbumum@git.codesubmit.io/finn-gmbh/default-python-kyusoj
+git clone https://github.com/Euniceatieno/url-shortening-api.git
 ```
 Set up your virtual environment
 ----------------------
